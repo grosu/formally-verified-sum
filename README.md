@@ -55,7 +55,8 @@ the K framework*, *write the semantics*, *infer the loop invariant*, *prove it*,
 
 1. **The agent had to learn the foundations first.** It did not yet have matching
    logic and the K framework internalized, so it had to be told to go study them.
-   This is a **one-time cost** — once learned, it need not be repeated.
+   This is a **one-time cost** — once learned, it need not be repeated; in the
+   product this knowledge is baked into a fine-tuned model (see below).
 2. **The tooling does not yet run the whole pipeline autonomously.** Today a human
    nudges the agent through each stage; the product will orchestrate them.
 
@@ -70,8 +71,8 @@ Given only the one-line prompt, the envisioned product runs this pipeline
 automatically — with its matching-logic and K knowledge already built in:
 
 1. **Generate the program and tests** (test-driven).
-2. **Select or derive a formal semantics** for the relevant language fragment, in
-   K / matching logic.
+2. **Use the language's full formal semantics** — already known to the model, not
+   a hand-picked fragment — to set up the verification (in K / matching logic).
 3. **Synthesize the specification** — the pre/post-condition as a reachability
    rule.
 4. **Infer the required lemmas and invariants** — e.g. the loop's circularity —
@@ -80,8 +81,31 @@ automatically — with its matching-logic and K knowledge already built in:
    `#Top`).
 6. **Emit** both a human-readable report and the machine-checkable artifacts.
 
-The human contributes one sentence; the AI contributes the code, the formalized
-language, the specification, the proof, and the machine-checked guarantee.
+The human contributes one sentence; the AI contributes the code, the specification,
+the proof, and the machine-checked guarantee.
+
+## The final product: a fine-tuned model
+
+In the final product, a single line from the human generates the program **and**
+formally verifies it end-to-end — and there is **no language fragment** to pick.
+The product is most likely a **fine-tuned model** that already carries, as
+built-in knowledge:
+
+- **full formal semantics of real languages** — many of them, complete, not
+  fragments — so the literal source program is verified directly against the real
+  language's semantics (no *mini Python*, no transliteration);
+- **the K framework** — its syntax, its rewrite rules, and how to write K
+  specifications (`claim`s) and discharge them with `kprove`;
+- **matching logic** — the theory, its metatheory, and the papers behind it;
+- **the proof techniques** — coinductive proofs, coinductive invariants,
+  circularities, and the rest of the reachability-logic toolkit.
+
+Because the model already knows the *entire* language's semantics, it never needs
+to "select or derive" a fragment the way this experiment did with *mini Python* —
+there is simply no reason to. The manual study steps in this experiment (prompts
+P3 and P7 in [`sum-verification.md`](sum-verification.md) §6) are exactly the
+knowledge that fine-tuning makes permanent and instantaneous, collapsing the whole
+interaction to the one-line prompt above.
 
 ---
 
